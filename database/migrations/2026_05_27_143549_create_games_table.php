@@ -13,7 +13,11 @@ return new class extends Migration
     {
         Schema::create('games', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('white_user_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('black_user_id')->constrained('users')->nullOnDelete();
+            $table->foreignId('winner_id')->constrained('users')->nullOnDelete();
             $table->timestamps();
+            $table->mediumText('moves');
         });
     }
 

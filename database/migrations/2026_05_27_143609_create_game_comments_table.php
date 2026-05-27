@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('game_comments', function (Blueprint $table) {
             $table->id();
+            $table->foreignId('commenter_id')->constrained('users')->cascadeOnDelete();
+            $table->foreignId('game_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
+            $table->string('content', 1024);
         });
     }
 
