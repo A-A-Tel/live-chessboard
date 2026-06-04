@@ -12,6 +12,11 @@ class User extends Authenticatable
         'email', 'name', 'password',
     ];
 
+    protected $hidden = [
+        'remember_token',
+        'password'
+    ];
+
     public function userSetting(): HasOne
     {
         return $this->hasOne(UserSetting::class);

@@ -26,14 +26,14 @@
 @theme {
     --color-accent: var(--accent);
     --color-background: var(--background);
-    --dark-primary: var(--dark-primary);
-    --dark-secondary: var(--dark-primary);
-    --divider: var(--divider);
-    --light-primary: var(--light-primary);
-    --primary: var(--primary);
-    --primary-text: var(--primary-text);
-    --secondary: var(--secondary);
-    --secondary-text: var(--secondary-text);
+    --color-dark-primary: var(--dark-primary);
+    --color-dark-secondary: var(--dark-primary);
+    --color-divider: var(--divider);
+    --color-light-primary: var(--light-primary);
+    --color-primary: var(--primary);
+    --color-primary-text: var(--primary-text);
+    --color-secondary: var(--secondary);
+    --color-secondary-text: var(--secondary-text);
 }
 
 .primary-text {
