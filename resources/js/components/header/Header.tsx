@@ -19,15 +19,19 @@ export default function Header(props: HeaderProps) {
     if (props.user) {
         accountOptions = (
             <div className="mr-20 ml-auto flex">
-                <img src={props.user.avatar == null ? noPfp : `/storage/avatars/${props.user.avatar}`} alt="Avatar" className="mr-10 h-[8vh] rounded-full" />
+                <img
+                    src={props.user.avatar == null ? noPfp : `/storage/avatars/${props.user.avatar}`}
+                    alt="Avatar"
+                    className="mr-10 h-[8vh] rounded-full"
+                />
                 <div className="flex flex-col">
                     <span className="primary-text text-2xl">{props.user.username}</span>
-                    <div className="flex">
-                        <Link href="/logout" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem] flex">
+                    <div className="flex gap-3">
+                        <Link href="/logout" className="secondary-text bg-dark-secondary flex h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
                             <img src={logout} alt="" />
                             Uitloggen
                         </Link>
-                        <Link href="/profile" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem] flex">
+                        <Link href="/profile" className="secondary-text bg-dark-secondary flex h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
                             <img src={profile} alt="" />
                             Profiel
                         </Link>
@@ -42,10 +46,15 @@ export default function Header(props: HeaderProps) {
                 <img src={noPfp} alt="Avatar" className="mr-10 h-[8vh] rounded-full" />
                 <div className="flex flex-col">
                     <span className="primary-text text-3xl">Niet ingelogd</span>
-                    <div className="flex mt-2.5 justify-center">
-                        <Link href="/users" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
-                            Registreren
-                        </Link>
+                    <div className="mt-2.5 flex justify-center">
+                        <div className="flex gap-3">
+                            <Link href="/register" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
+                                Registreren
+                            </Link>
+                            <Link href="/login" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
+                                Inloggen
+                            </Link>
+                        </div>
                     </div>
                 </div>
             </div>
