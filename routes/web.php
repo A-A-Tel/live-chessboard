@@ -17,6 +17,10 @@ Route::get('/login', function () {
     return Inertia::render('Login');
 });
 
+Route::get('/profile', function () {
+    return Inertia::render('Profile', ['user' => auth()->user()]);
+});
+
 
 Route::controller(UserController::class)->group(function () {
     Route::post('/users', 'store');
