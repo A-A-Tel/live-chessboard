@@ -1,7 +1,10 @@
-export default function Home() {
+import Header from '@/components/header';
+import { User } from '@/types';
+
+export default function Home({user}: { user?: User }) {
     return (
         <>
-            Hello, world!
+            <Header user={user} />
         </>
     );
 }

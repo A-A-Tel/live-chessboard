@@ -16,7 +16,7 @@
     --dark-primary: #512DA8;
     --dark-secondary: #371F6E;
     --divider: #BDBDBD;
-    --light-primary: #D0C3E8;
+    --light-primary: #a87dec;
     --primary: #683BB8;
     --primary-text: #FD80FF;
     --secondary: #4D2D8C;
@@ -26,14 +26,14 @@
 @theme {
     --color-accent: var(--accent);
     --color-background: var(--background);
-    --dark-primary: var(--dark-primary);
-    --dark-secondary: var(--dark-primary);
-    --divider: var(--divider);
-    --light-primary: var(--light-primary);
-    --primary: var(--primary);
-    --primary-text: var(--primary-text);
-    --secondary: var(--secondary);
-    --secondary-text: var(--secondary-text);
+    --color-dark-primary: var(--dark-primary);
+    --color-dark-secondary: var(--dark-secondary);
+    --color-divider: var(--divider);
+    --color-light-primary: var(--light-primary);
+    --color-primary: var(--primary);
+    --color-primary-text: var(--primary-text);
+    --color-secondary: var(--secondary);
+    --color-secondary-text: var(--secondary-text);
 }
 
 .primary-text {
@@ -44,4 +44,34 @@
 .secondary-text {
     color: var(--secondary-text);
     font-family: 'Londrina', serif;
+}
+
+.form {
+    width: 45vw;
+    margin: 5rem auto;
+    background: var(--primary);
+    padding: 2vw;
+    border-radius: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2vw;
+
+    input {
+        width: 100%;
+        background: var(--light-primary);
+        padding: 0.6rem 1rem;
+        border-radius: 1rem;
+    }
+
+    h2 {
+        font-size: 1.8rem;
+        font-family: 'Balonku', serif;
+        color: var(--primary-text);
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
 }

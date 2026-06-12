@@ -9,7 +9,12 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 class User extends Authenticatable
 {
     protected $fillable = [
-        'email', 'name', 'password',
+        'email', 'username', 'password', 'avatar'
+    ];
+
+    protected $hidden = [
+        'remember_token',
+        'password'
     ];
 
     public function userSetting(): HasOne
