@@ -1,9 +1,10 @@
 import Header from '@/components/header';
+import { User } from '@/types';
 
-export default function Home() {
+export default function Home({user}: { user?: User }) {
     return (
         <>
-            <Header/>
+            <Header user={user} />
         </>
     );
 }

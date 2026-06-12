@@ -1,4 +1,10 @@
 import { User } from '@/types';
+import { Link } from '@inertiajs/react';
+
+import noPfp from '../../../img/icons/no-pfp.jpg'
+import logo from '../../../img/pieces/white/king.png';
+import profile from '../../../img/icons/profile.svg';
+import logout from '../../../img/icons/logout.svg';
 
 type HeaderProps = {
     user?: User;
@@ -6,17 +12,56 @@ type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
 
-    if (!props.user) {
-        return (
-            <header className='h-[10vh] bg-dark-primary'>
+    console.log(props.user != undefined);
 
-            </header>
+    let accountOptions;
+
+    if (props.user) {
+        accountOptions = (
+            <div className="mr-20 ml-auto flex">
+                <img src={props.user.avatar == null ? noPfp : `/storage/avatars/${props.user.avatar}`} alt="Avatar" className="mr-10 h-[8vh] rounded-full" />
+                <div className="flex flex-col">
+                    <span className="primary-text text-2xl">{props.user.username}</span>
+                    <div className="flex">
+                        <Link href="/logout" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem] flex">
+                            <img src={logout} alt="" />
+                            Uitloggen
+                        </Link>
+                        <Link href="/profile" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem] flex">
+                            <img src={profile} alt="" />
+                            Profiel
+                        </Link>
+                    </div>
+                </div>
+            </div>
+        );
+    }
+    else {
+        accountOptions = (
+            <div className="mr-20 ml-auto flex">
+                <img src={noPfp} alt="Avatar" className="mr-10 h-[8vh] rounded-full" />
+                <div className="flex flex-col">
+                    <span className="primary-text text-3xl">Niet ingelogd</span>
+                    <div className="flex mt-2.5 justify-center">
+                        <Link href="/users" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
+                            Registreren
+                        </Link>
+                    </div>
+                </div>
+            </div>
         );
     }
 
     return (
-        <>
-
-        </>
+        <header className='h-[10vh] bg-dark-primary grid grid-cols-3 items-center'>
+            <Link href='/' className='h-[8vh] flex ml-[2vw]'>
+                <img src={logo} alt="White King" className='h-auto mr-[0.6vw]'/>
+                <span className='primary-text text-4xl m-[auto_0_auto_0]'>Kawaii Chess</span>
+            </Link>
+            <nav>
+                test
+            </nav>
+            {accountOptions}
+        </header>
     );
 }
