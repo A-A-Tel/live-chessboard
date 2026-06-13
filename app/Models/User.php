@@ -14,7 +14,10 @@ class User extends Authenticatable
 
     protected $hidden = [
         'remember_token',
-        'password'
+        'password',
+        'email',
+        'created_at',
+        'updated_at'
     ];
 
     public function userSetting(): HasOne

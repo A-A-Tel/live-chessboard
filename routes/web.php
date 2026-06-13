@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,19 +18,21 @@ Route::get('/login', function () {
     return Inertia::render('Login');
 });
 
-Route::get('/profile', function () {
-    return Inertia::render('Profile', ['user' => auth()->user()]);
+Route::controller(ProfileController::class)->group(function () {
+    Route::get('/profile', 'index')->name('profile');
+    Route::get('/profile/{user}', 'show')->name('profile.show');
+    Route::post('/profile/{user}', 'store')->name('profile.store');
 });
 
 
 Route::controller(UserController::class)->group(function () {
-    Route::post('/users', 'store');
-    Route::put('/users', 'update');
-    Route::delete('/users', 'destroy');
+    Route::post('/users', 'store')->name('users.store');
+    Route::put('/users', 'update')->name('users.update');
+    Route::delete('/users', 'destroy')->name('users.destroy');
 });
 
 Route::controller(AuthController::class)->group(function () {
-    Route::post('/login', 'login');
-    Route::get('/logout', 'logout');
+    Route::post('/login', 'login')->name("login");
+    Route::get('/logout', 'logout')->name("logout");
 });
 
