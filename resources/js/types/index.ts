@@ -5,6 +5,7 @@ export type User = {
 }
 
 export type Comment = {
+    id: number;
     content: string;
     created_at: number;
     commenter: User;

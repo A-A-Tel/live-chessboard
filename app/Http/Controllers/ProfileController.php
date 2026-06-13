@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreProfileRequest;
+use App\Http\Requests\StoreUserCommentRequest;
 use App\Models\User;
 use App\Models\UserComment;
 use Inertia\Inertia;
@@ -15,25 +15,19 @@ class ProfileController extends Controller
 
         $comments = UserComment::where('user_id', $user->id)
             ->with(['commenter'])
-            ->orderBy('created_at')
+            ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('Profile', ['user' => $user, 'profileUser' => $user]);
+        return Inertia::render('Profile', ['user' => $user, 'profileUser' => $user, 'comments' => $comments]);
     }
 
     public function show(User $user) {
-        return Inertia::render('Profile', ['user' => auth()->user(), 'profileUser' => $user]);
-    }
 
-    public function store(StoreProfileRequest $request, User $user) {
-        $data = $request->validated();
-        $commenter = auth()->user();
+        $comments = UserComment::where('user_id', $user->id)
+            ->with(['commenter'])
+            ->orderBy('created_at', 'desc')
+            ->get();
 
-        $data['user_id'] = $user->id;
-        $data['commenter_id'] = $commenter->id;
-
-        UserComment::create($data);
-
-        redirect()->route('profile.show', ['user' => $user->id]);
+        return Inertia::render('Profile', ['user' => auth()->user(), 'profileUser' => $user, 'comments' => $comments]);
     }
 }

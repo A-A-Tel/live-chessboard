@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,9 +22,12 @@ Route::get('/login', function () {
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
     Route::get('/profile/{user}', 'show')->name('profile.show');
-    Route::post('/profile/{user}', 'store')->name('profile.store');
 });
 
+Route::controller(UserCommentController::class)->group(function () {
+    Route::post('/user/comments/{user}', 'store')->name('user.comments.store');
+    Route::delete('/user/comments/{comment}', 'destroy')->name('user.comments.destroy');
+});
 
 Route::controller(UserController::class)->group(function () {
     Route::post('/users', 'store')->name('users.store');
