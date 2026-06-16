@@ -30,6 +30,7 @@ Route::controller(UserCommentController::class)->group(function () {
 });
 
 Route::controller(UserController::class)->group(function () {
+    Route::get('/users', 'index')->name('users');
     Route::post('/users', 'store')->name('users.store');
     Route::put('/users', 'update')->name('users.update');
     Route::delete('/users', 'destroy')->name('users.destroy');

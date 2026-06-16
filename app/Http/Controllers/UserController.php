@@ -9,15 +9,34 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Inertia\Inertia;
+use function Termwind\parse;
 
 class UserController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $users = User::query();
+
+        $search = $request->query('search');
+        $key = intval($request->query('key'));
+
+
+        if ($search) $users->where('username', 'like', '%' . $search . '%');
+        if ($key) $users->where('id', '>', $key);
+
+        $users = $users->take(10)->get();
+
+        if ($users->isEmpty()) return Inertia::render('Users', [
+            'user' => auth()->user(),
+            'users' => [],
+            'nextKey' => null,
+        ]);
+
+        return Inertia::render('Users', ['user' => auth()->user(), 'users' => $users, 'nextKey' => $users->last()->id]);
     }
 
     /**
