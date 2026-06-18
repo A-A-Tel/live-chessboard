@@ -6,11 +6,11 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
-use function Termwind\parse;
 
 class UserController extends Controller
 {
@@ -19,26 +19,43 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $users = User::query();
-
+        $auth = auth()->user();
         $search = $request->query('search');
         $key = intval($request->query('key'));
 
+        $query = User::query()
+            ->when($auth, function ($q) use ($auth) {
+                $q->leftJoin('relations', function ($join) use ($auth) {
+                    $join->on(DB::raw('CASE WHEN users.id < ' . $auth->id . ' THEN users.id ELSE ' . $auth->id . ' END'), '=', 'relations.user1_id')
+                        ->on(DB::raw('CASE WHEN users.id > ' . $auth->id . ' THEN users.id ELSE ' . $auth->id . ' END'), '=', 'relations.user2_id');
+                })
+                    ->where('users.id', '!=', $auth->id)
+                    ->addSelect('relations.status as relation_status')
+                    ->addSelect('relations.sender_id as relation_sender');
+            })
+            ->select('users.id', 'users.username')
+            ->when($search, fn($q) => $q->where('users.username', 'like', '%' . $search . '%'))
+            ->when($key,    fn($q) => $q->where('users.id', '>', $key));
 
-        if ($search) $users->where('username', 'like', '%' . $search . '%');
-        if ($key) $users->where('id', '>', $key);
+        $users = $query->paginate();
 
-        $users = $users->take(10)->get();
+        $nextKey = $users->isNotEmpty() ? $users->last()->id : null;
 
-        if ($users->isEmpty()) return Inertia::render('Users', [
-            'user' => auth()->user(),
-            'users' => [],
-            'nextKey' => null,
+        $users = $users->map(fn($user) => [
+            'id'       => $user->id,
+            'username' => $user->username,
+            'relation' => isset($user->relation_status) ? [
+                'status' => $user->relation_status,
+                'sender' => $user->relation_sender,
+            ] : null,
         ]);
 
-        return Inertia::render('Users', ['user' => auth()->user(), 'users' => $users, 'nextKey' => $users->last()->id]);
+        return Inertia::render('Users', [
+            'user'    => $auth,
+            'users'   => $users,
+            'nextKey' => $nextKey,
+        ]);
     }
-
     /**
      * Display the specified resource.
      */
