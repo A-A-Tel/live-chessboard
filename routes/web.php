@@ -37,9 +37,6 @@ Route::middleware('auth')->prefix('relations')->group(function () {
     Route::patch('/{relation}/accept', [RelationController::class, 'accept'])
         ->name('relations.accept');
 
-    Route::patch('/{relation}/deny', [RelationController::class, 'deny'])
-        ->name('relations.deny');
-
     Route::patch('/{relation}/block', [RelationController::class, 'block'])
         ->name('relations.block');
 

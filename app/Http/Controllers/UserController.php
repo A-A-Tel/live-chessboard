@@ -23,37 +23,52 @@ class UserController extends Controller
         $search = $request->query('search');
         $key = intval($request->query('key'));
 
-        $query = User::query()
+        $users = User::query()
+            ->when($auth, fn ($q) =>
+            $q->where('users.id', '!=', $auth->id)
+            )
+            ->when($search, fn ($q) =>
+            $q->where('users.username', 'like', "%{$search}%")
+            )
+            ->when($key, fn ($q) =>
+            $q->where('users.id', '>', $key)
+            )
+            ->addSelect(['users.id', 'users.username'])
+
             ->when($auth, function ($q) use ($auth) {
-                $q->leftJoin('relations', function ($join) use ($auth) {
-                    $join->on(DB::raw('CASE WHEN users.id < ' . $auth->id . ' THEN users.id ELSE ' . $auth->id . ' END'), '=', 'relations.user1_id')
-                        ->on(DB::raw('CASE WHEN users.id > ' . $auth->id . ' THEN users.id ELSE ' . $auth->id . ' END'), '=', 'relations.user2_id');
-                })
-                    ->where('users.id', '!=', $auth->id)
-                    ->addSelect('relations.status as relation_status')
-                    ->addSelect('relations.sender_id as relation_sender');
+
+                $relation = DB::table('relations')
+                    ->selectRaw("
+                    json_object(
+                        'id', id,
+                        'status', status,
+                        'sender', sender_id
+                    )
+                ")
+                    ->where(function ($q) use ($auth) {
+                        $q->whereColumn('user1_id', 'users.id')
+                            ->where('user2_id', $auth->id);
+                    })
+                    ->orWhere(function ($q) use ($auth) {
+                        $q->whereColumn('user2_id', 'users.id')
+                            ->where('user1_id', $auth->id);
+                    })
+                    ->limit(1);
+
+                $q->addSelect([
+                    'relation' => $relation,
+                ]);
             })
-            ->select('users.id', 'users.username')
-            ->when($search, fn($q) => $q->where('users.username', 'like', '%' . $search . '%'))
-            ->when($key,    fn($q) => $q->where('users.id', '>', $key));
 
-        $users = $query->paginate();
+            ->paginate();
 
-        $nextKey = $users->isNotEmpty() ? $users->last()->id : null;
-
-        $users = $users->map(fn($user) => [
-            'id'       => $user->id,
-            'username' => $user->username,
-            'relation' => isset($user->relation_status) ? [
-                'status' => $user->relation_status,
-                'sender' => $user->relation_sender,
-            ] : null,
-        ]);
+        foreach ($users->items() as $user) {
+            $user->relation = json_decode($user->relation);
+        }
 
         return Inertia::render('Users', [
             'user'    => $auth,
-            'users'   => $users,
-            'nextKey' => $nextKey,
+            'users'   => $users
         ]);
     }
     /**
