@@ -71,6 +71,7 @@ export default function Header(props: HeaderProps) {
                 <Link href='/'>Startpagina</Link>
                 <Link>Spelen</Link>
                 <Link href='/users'>Gebruikers</Link>
+                <Link href='/friends'>Vrienden</Link>
             </nav>
             {accountOptions}
         </header>

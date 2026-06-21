@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Relation;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
+use Inertia\Inertia;
 
 class RelationController extends Controller
 {
@@ -63,7 +64,6 @@ class RelationController extends Controller
 
         return redirect()->back()->withErrors('success', 'Geaccepteerd.');
     }
-
     public function block(Relation $relation): RedirectResponse
     {
         $auth = auth()->user();
@@ -81,6 +81,38 @@ class RelationController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Gebruiker geblokkeerd.');
+    }
+
+    public function index() {
+        $auth = auth()->user();
+
+        if (!$auth) return redirect()->route('login');
+
+        $users = Relation::query()
+            ->where(fn ($q) => $q
+                ->where('user1_id', $auth->id)
+                ->orWhere('user2_id', $auth->id)
+            )
+            ->where(fn ($q) => $q
+                ->where('status', 'accepted')
+                ->orWhere('sender_id', '!=', $auth->id)
+            )
+            ->with([
+                'user1:id,username',
+                'user2:id,username',
+            ])
+            ->get()
+            ->map(fn ($relation) => [
+                'id'       => $relation->user1_id === $auth->id ? $relation->user2->id : $relation->user1->id,
+                'username' => $relation->user1_id === $auth->id ? $relation->user2->username : $relation->user1->username,
+                'relation' => [
+                    'id'     => $relation->id,
+                    'status' => $relation->status,
+                    'sender' => $relation->sender_id,
+                ],
+            ]);
+
+        return Inertia::render('Friends', ['user' => $auth, 'users' => $users]);
     }
 
     public function destroy(Relation $relation): RedirectResponse

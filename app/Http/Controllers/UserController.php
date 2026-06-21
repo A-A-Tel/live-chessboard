@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
+use App\Models\Relation;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -19,59 +20,46 @@ class UserController extends Controller
      */
     public function index(Request $request)
     {
-        $auth = auth()->user();
+        $auth   = auth()->user();
         $search = $request->query('search');
-        $key = intval($request->query('key'));
+        $key    = intval($request->query('key'));
 
         $users = User::query()
-            ->when($auth, fn ($q) =>
-            $q->where('users.id', '!=', $auth->id)
-            )
-            ->when($search, fn ($q) =>
-            $q->where('users.username', 'like', "%{$search}%")
-            )
-            ->when($key, fn ($q) =>
-            $q->where('users.id', '>', $key)
-            )
-            ->addSelect(['users.id', 'users.username'])
-
-            ->when($auth, function ($q) use ($auth) {
-
-                $relation = DB::table('relations')
-                    ->selectRaw("
-                    json_object(
-                        'id', id,
-                        'status', status,
-                        'sender', sender_id
-                    )
-                ")
-                    ->where(function ($q) use ($auth) {
-                        $q->whereColumn('user1_id', 'users.id')
-                            ->where('user2_id', $auth->id);
-                    })
-                    ->orWhere(function ($q) use ($auth) {
-                        $q->whereColumn('user2_id', 'users.id')
-                            ->where('user1_id', $auth->id);
-                    })
-                    ->limit(1);
-
-                $q->addSelect([
-                    'relation' => $relation,
-                ]);
-            })
-
+            ->select(['id', 'username'])
+            ->when($auth,   fn ($q) => $q->where('id', '!=', $auth->id))
+            ->when($search, fn ($q) => $q->where('username', 'like', "%{$search}%"))
+            ->when($key,    fn ($q) => $q->where('id', '>', $key))
             ->paginate();
 
-        foreach ($users->items() as $user) {
-            $user->relation = json_decode($user->relation);
+        if ($auth) {
+            $userIds = $users->pluck('id');
+
+            $relations = Relation::query()
+                ->where(fn ($q) => $q
+                    ->whereIn('user1_id', $userIds)->where('user2_id', $auth->id)
+                )
+                ->orWhere(fn ($q) => $q
+                    ->whereIn('user2_id', $userIds)->where('user1_id', $auth->id)
+                )
+                ->get()
+                ->keyBy(fn ($r) => $r->user1_id === $auth->id ? $r->user2_id : $r->user1_id);
+
+            $users->through(function ($user) use ($relations) {
+                $relation = $relations->get($user->id);
+                $user->relation = $relation ? [
+                    'id'     => $relation->id,
+                    'status' => $relation->status,
+                    'sender' => $relation->sender_id,
+                ] : null;
+                return $user;
+            });
         }
 
         return Inertia::render('Users', [
-            'user'    => $auth,
-            'users'   => $users
+            'user'  => $auth,
+            'users' => $users,
         ]);
-    }
-    /**
+    }    /**
      * Display the specified resource.
      */
     public function show(User $user)

@@ -30,18 +30,23 @@ Route::controller(UserCommentController::class)->middleware('auth')->group(funct
     Route::delete('/user/comments/{comment}', 'destroy')->name('user.comments.destroy');
 });
 
-Route::middleware('auth')->prefix('relations')->group(function () {
-    Route::post('/request/{user}', [RelationController::class, 'sendRequest'])
-        ->name('relations.request');
+Route::middleware('auth')->group(function () {
+    Route::prefix('relations')->group(function () {
 
-    Route::patch('/{relation}/accept', [RelationController::class, 'accept'])
-        ->name('relations.accept');
+        Route::post('/request/{user}', [RelationController::class, 'sendRequest'])
+            ->name('relations.request');
 
-    Route::patch('/{relation}/block', [RelationController::class, 'block'])
-        ->name('relations.block');
+        Route::patch('/{relation}/accept', [RelationController::class, 'accept'])
+            ->name('relations.accept');
 
-    Route::delete('/{relation}', [RelationController::class, 'destroy'])
-        ->name('relations.destroy');
+        Route::patch('/{relation}/block', [RelationController::class, 'block'])
+            ->name('relations.block');
+
+        Route::delete('/{relation}', [RelationController::class, 'destroy'])
+            ->name('relations.destroy');
+    });
+    Route::get('/friends', [RelationController::class, 'index'])
+        ->name('relations.index');
 });
 Route::controller(UserController::class)->group(function () {
     Route::get('/users', 'index')->name('users');

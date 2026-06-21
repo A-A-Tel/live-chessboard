@@ -55,12 +55,12 @@ class User extends Authenticatable
         return $this->hasMany(GameComment::class, 'commenter_id');
     }
 
-    public function friendshipsAsUser1(): HasMany
+    public function relationsAsUser1(): HasMany
     {
         return $this->hasMany(Relation::class, 'user1_id');
     }
 
-    public function friendshipsAsUser2(): HasMany
+    public function relationsAsUser2(): HasMany
     {
         return $this->hasMany(Relation::class, 'user2_id');
     }
