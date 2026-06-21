@@ -5,9 +5,19 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Friendship extends Model
+class Relation extends Model
 {
-    protected $fillable = [];
+    protected $fillable = ['user1_id', 'user2_id', 'sender_id', 'status',];
+
+    protected $hidden = [
+        'created_at', 'updated_at',
+    ];
+
+    protected $relations = [
+        'user1' => User::class,
+        'user2' => User::class,
+        'sender' => User::class,
+    ];
 
     public function userAsUser1(): BelongsTo
     {

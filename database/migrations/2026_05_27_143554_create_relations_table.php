@@ -11,13 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('friendships', function (Blueprint $table) {
+        Schema::create('relations', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user1_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('user2_id')->constrained('users')->cascadeOnDelete();
             $table->foreignId('sender_id')->constrained('users')->cascadeOnDelete();
             $table->timestamps();
-            $table->enum('status', ['pending', 'accepted', 'denied', 'blocked']);
+            $table->enum('status', ['pending', 'accepted', 'blocked']);
             $table->unique(['user1_id', 'user2_id']);
         });
     }
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('friendships');
+        Schema::dropIfExists('relations');
     }
 };

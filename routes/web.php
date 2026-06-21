@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\RelationController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -24,12 +25,31 @@ Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile/{user}', 'show')->name('profile.show');
 });
 
-Route::controller(UserCommentController::class)->group(function () {
+Route::controller(UserCommentController::class)->middleware('auth')->group(function () {
     Route::post('/user/comments/{user}', 'store')->name('user.comments.store');
     Route::delete('/user/comments/{comment}', 'destroy')->name('user.comments.destroy');
 });
 
+Route::middleware('auth')->group(function () {
+    Route::prefix('relations')->group(function () {
+
+        Route::post('/request/{user}', [RelationController::class, 'sendRequest'])
+            ->name('relations.request');
+
+        Route::patch('/{relation}/accept', [RelationController::class, 'accept'])
+            ->name('relations.accept');
+
+        Route::patch('/{relation}/block', [RelationController::class, 'block'])
+            ->name('relations.block');
+
+        Route::delete('/{relation}', [RelationController::class, 'destroy'])
+            ->name('relations.destroy');
+    });
+    Route::get('/friends', [RelationController::class, 'index'])
+        ->name('relations.index');
+});
 Route::controller(UserController::class)->group(function () {
+    Route::get('/users', 'index')->name('users');
     Route::post('/users', 'store')->name('users.store');
     Route::put('/users', 'update')->name('users.update');
     Route::delete('/users', 'destroy')->name('users.destroy');

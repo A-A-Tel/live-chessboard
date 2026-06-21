@@ -22,17 +22,17 @@ export default function Header(props: HeaderProps) {
                 <img
                     src={props.user.avatar == null ? noPfp : `/storage/avatars/${props.user.avatar}`}
                     alt="Avatar"
-                    className="mr-10 h-[8vh] rounded-full"
+                    className="mr-10 h-[4.5vw] w-[4.5vw] rounded-full"
                 />
                 <div className="flex flex-col">
                     <span className="primary-text text-2xl">{props.user.username}</span>
                     <div className="flex gap-3">
                         <Link href="/logout" className="secondary-text bg-dark-secondary flex h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
-                            <img src={logout} alt="" />
+                            <img src={logout} alt="" className="mr-2" />
                             Uitloggen
                         </Link>
                         <Link href="/profile" className="secondary-text bg-dark-secondary flex h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
-                            <img src={profile} alt="" />
+                            <img src={profile} alt="" className="mr-2" />
                             Profiel
                         </Link>
                     </div>
@@ -67,8 +67,11 @@ export default function Header(props: HeaderProps) {
                 <img src={logo} alt="White King" className='h-auto mr-[0.6vw]'/>
                 <span className='primary-text text-4xl m-[auto_0_auto_0]'>Kawaii Chess</span>
             </Link>
-            <nav>
-                test
+            <nav className='flex secondary-text text-2xl gap-15 justify-around'>
+                <Link href='/'>Startpagina</Link>
+                <Link>Spelen</Link>
+                <Link href='/users'>Gebruikers</Link>
+                <Link href='/friends'>Vrienden</Link>
             </nav>
             {accountOptions}
         </header>
