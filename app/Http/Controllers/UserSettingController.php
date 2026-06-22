@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\UserSetting;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class UserSettingController extends Controller
 {
@@ -12,7 +13,7 @@ class UserSettingController extends Controller
      */
     public function index()
     {
-        //
+        return Inertia::render('Settings', ['user' => auth()->user()]);
     }
 
     /**

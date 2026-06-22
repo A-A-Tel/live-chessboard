@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserSettingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -48,11 +49,17 @@ Route::middleware('auth')->group(function () {
     Route::get('/friends', [RelationController::class, 'index'])
         ->name('relations.index');
 });
+
 Route::controller(UserController::class)->group(function () {
     Route::get('/users', 'index')->name('users');
     Route::post('/users', 'store')->name('users.store');
     Route::put('/users', 'update')->name('users.update');
+    Route::patch('/users', 'changeAvatar')->name('users.changeAvatar');
     Route::delete('/users', 'destroy')->name('users.destroy');
+});
+
+Route::controller(UserSettingController::class)->group(function () {
+    Route::get('/settings', 'index')->name('settings');
 });
 
 Route::controller(AuthController::class)->group(function () {

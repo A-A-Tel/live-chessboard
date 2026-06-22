@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangeAvatarRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Relation;
@@ -96,7 +97,29 @@ class UserController extends Controller
 
         if ($user === null) return redirect()->intended('/', 401);
 
-        $data = $request->validated();
+        $data = array_filter(
+            $request->validated(),
+            fn ($value) => $value !== null && $value !== ''
+        );
+
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        }
+        $user->update($data);
+
+        return redirect()->intended('/settings');
+    }
+
+    public function changeAvatar(ChangeAvatarRequest $request) {
+        $user = auth()->user();
+
+        if ($user === null) return redirect()->intended('/', 401);
+
+        $data = array_filter(
+            $request->validated(),
+            fn ($value) => $value !== null && $value !== ''
+        );
+
 
         if (isset($data['avatar'])) {
             Storage::disk('public')->delete('avatars/' . $user->avatar);
@@ -104,12 +127,8 @@ class UserController extends Controller
         }
         $data['avatar'] = $string_name?? null;
 
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
         $user->update($data);
-
-        return redirect()->intended('/');
+        return redirect()->intended('/settings');
     }
 
     /**
