@@ -9,6 +9,12 @@ class UserSetting extends Model
 {
     protected $fillable = [
         'user_id',
+        'bitmap'
+    ];
+
+    protected $hidden = [
+        'created_at',
+        'updated_at',
     ];
 
     public function user(): BelongsTo {

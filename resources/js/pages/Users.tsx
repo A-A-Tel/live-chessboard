@@ -1,11 +1,11 @@
-import { OtherUser, User } from '@/types';
+import { OtherUser, Auth } from '@/types';
 import { Form } from '@inertiajs/react';
 import Header from '@/components/header';
 import UserCard from '@/components/user-card';
 import { useState } from 'react';
 
 export type usersProps = {
-    user?: User;
+    auth: Auth;
     users: {
         data: OtherUser[]
     }
@@ -18,7 +18,7 @@ export default function Users(props: usersProps) {
 
     return (
         <>
-            <Header user={props.user} />
+            <Header user={props.auth.user} />
             <div className="mx-15 mt-15 flex flex-col gap-7">
                 <h1 className="primary-text mb-11 text-6xl">Gebruikers</h1>
                 <Form action="/users" method="get" className="secondary-text flex gap-4">
@@ -28,7 +28,7 @@ export default function Users(props: usersProps) {
 
                 <div className="flex flex-wrap justify-between gap-10">
                     {props.users.data.map((user) => (
-                        <UserCard key={user.id} other={user} user={props.user}/>
+                        <UserCard key={user.id} other={user} user={props.auth.user}/>
                     ))}
                 </div>
                 {props.users.data.length === 0 && <div className="primary-text text-2xl">Geen gebruikers gevonden.</div>}

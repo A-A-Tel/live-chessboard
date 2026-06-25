@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UpdateUserSettingsRequest;
 use App\Models\UserSetting;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class UserSettingController extends Controller
 {
@@ -12,54 +14,27 @@ class UserSettingController extends Controller
      */
     public function index()
     {
-        //
-    }
+        $user = auth()->user();
+        $userSetting = UserSetting::where('user_id', $user->id)->first();
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(UserSetting $userSetting)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(UserSetting $userSetting)
-    {
-        //
+        return Inertia::render('Settings', ['user' => auth()->user(), 'settings' => $userSetting->bitmap]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, UserSetting $userSetting)
+    public function update(UpdateUserSettingsRequest $request)
     {
-        //
-    }
+        $data = $request->validated();
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(UserSetting $userSetting)
-    {
-        //
+        $user = auth()->user();
+
+        if (!$user) return redirect()->route('page.login');
+
+        $userSetting = UserSetting::where('user_id', $user->id)->first();
+
+        if (!$userSetting) return redirect()->route('settings');
+        $userSetting->update($data);
+        return redirect()->route('settings');
     }
 }

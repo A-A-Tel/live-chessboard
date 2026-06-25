@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\ChangeAvatarRequest;
 use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Relation;
 use App\Models\User;
+use App\Models\UserSetting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -59,7 +60,9 @@ class UserController extends Controller
             'user'  => $auth,
             'users' => $users,
         ]);
-    }    /**
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(User $user)
@@ -83,6 +86,7 @@ class UserController extends Controller
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
+        UserSetting::create(["user_id" => $user->id]);
         auth()->login($user);
         return redirect()->intended('/');
     }
@@ -96,7 +100,29 @@ class UserController extends Controller
 
         if ($user === null) return redirect()->intended('/', 401);
 
-        $data = $request->validated();
+        $data = array_filter(
+            $request->validated(),
+            fn ($value) => $value !== null && $value !== ''
+        );
+
+        if (isset($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        }
+        $user->update($data);
+
+        return redirect()->intended('/settings');
+    }
+
+    public function changeAvatar(ChangeAvatarRequest $request) {
+        $user = auth()->user();
+
+        if ($user === null) return redirect()->intended('/', 401);
+
+        $data = array_filter(
+            $request->validated(),
+            fn ($value) => $value !== null && $value !== ''
+        );
+
 
         if (isset($data['avatar'])) {
             Storage::disk('public')->delete('avatars/' . $user->avatar);
@@ -104,12 +130,8 @@ class UserController extends Controller
         }
         $data['avatar'] = $string_name?? null;
 
-        if (isset($data['password'])) {
-            $data['password'] = Hash::make($data['password']);
-        }
         $user->update($data);
-
-        return redirect()->intended('/');
+        return redirect()->intended('/settings');
     }
 
     /**

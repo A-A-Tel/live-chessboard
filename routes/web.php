@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\UserCommentController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserSettingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -13,12 +14,12 @@ Route::get('/', function () {
 })->name('page.home');
 
 Route::get('/register', function () {
-    return Inertia::render('Register');
-});
+    return Inertia::render('Register', ['user' => auth()->user()]);
+})->name('page.register');
 
 Route::get('/login', function () {
-    return Inertia::render('Login');
-});
+    return Inertia::render('Login',['user' => auth()->user()]);
+})->name('page.login');
 
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
@@ -48,11 +49,20 @@ Route::middleware('auth')->group(function () {
     Route::get('/friends', [RelationController::class, 'index'])
         ->name('relations.index');
 });
+
 Route::controller(UserController::class)->group(function () {
     Route::get('/users', 'index')->name('users');
     Route::post('/users', 'store')->name('users.store');
-    Route::put('/users', 'update')->name('users.update');
-    Route::delete('/users', 'destroy')->name('users.destroy');
+    Route::middleware('auth')->group(function () {
+        Route::put('/users', 'update')->name('users.update');
+        Route::patch('/users', 'changeAvatar')->name('users.changeAvatar');
+        Route::delete('/users', 'destroy')->name('users.destroy');
+    });
+});
+
+Route::middleware('auth')->controller(UserSettingController::class)->group(function () {
+    Route::get('/settings', 'index')->name('settings');
+    Route::put('/settings', 'update')->name('settings.update');
 });
 
 Route::controller(AuthController::class)->group(function () {
