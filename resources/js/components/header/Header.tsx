@@ -12,28 +12,28 @@ type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
 
-    console.log(props.user != undefined);
-
     let accountOptions;
 
     if (props.user) {
         accountOptions = (
             <div className="mr-20 ml-auto flex">
-                <img
-                    src={props.user.avatar == null ? noPfp : `/storage/avatars/${props.user.avatar}`}
-                    alt="Avatar"
-                    className="mr-10 h-[4.5vw] w-[4.5vw] rounded-full"
-                />
+                <Link href={`/profile/${props.user.id}`}>
+                    <img
+                        src={props.user.avatar == null ? noPfp : `/storage/avatars/${props.user.avatar}`}
+                        alt="Avatar"
+                        className="mr-10 h-[4.5vw] w-[4.5vw] rounded-full"
+                    />
+                </Link>
                 <div className="flex flex-col">
                     <span className="primary-text text-2xl">{props.user.username}</span>
                     <div className="flex gap-3">
+                        <Link href="/settings" className="secondary-text bg-dark-secondary flex h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
+                            <img src={profile} alt="" className="mr-2" />
+                            Instellingen
+                        </Link>
                         <Link href="/logout" className="secondary-text bg-dark-secondary flex h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
                             <img src={logout} alt="" className="mr-2" />
                             Uitloggen
-                        </Link>
-                        <Link href="/profile" className="secondary-text bg-dark-secondary flex h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
-                            <img src={profile} alt="" className="mr-2" />
-                            Profiel
                         </Link>
                     </div>
                 </div>
@@ -48,11 +48,11 @@ export default function Header(props: HeaderProps) {
                     <span className="primary-text text-3xl">Niet ingelogd</span>
                     <div className="mt-2.5 flex justify-center">
                         <div className="flex gap-3">
-                            <Link href="/register" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
-                                Registreren
-                            </Link>
                             <Link href="/login" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
                                 Inloggen
+                            </Link>
+                            <Link href="/register" className="secondary-text bg-dark-secondary h-fit w-fit rounded-2xl p-3 text-[1.2rem]">
+                                Registreren
                             </Link>
                         </div>
                     </div>
@@ -68,8 +68,8 @@ export default function Header(props: HeaderProps) {
                 <span className='primary-text text-4xl m-[auto_0_auto_0]'>Kawaii Chess</span>
             </Link>
             <nav className='flex secondary-text text-2xl gap-15 justify-around'>
-                <Link href='/'>Startpagina</Link>
                 <Link>Spelen</Link>
+                <Link href={props.user ? `/profile/${props.user.id}` : '/login'}>Profiel</Link>
                 <Link href='/users'>Gebruikers</Link>
                 <Link href='/friends'>Vrienden</Link>
             </nav>

@@ -97,13 +97,10 @@ class RelationController extends Controller
                 ->where('status', 'accepted')
                 ->orWhere('sender_id', '!=', $auth->id)
             )
-            ->with([
-                'user1:id,username',
-                'user2:id,username',
-            ])
+            ->with(['user1', 'user2'])
             ->get()
             ->map(fn ($relation) => [
-                'id'       => $relation->user1_id === $auth->id ? $relation->user2->id : $relation->user1->id,
+                'id'       => $relation->user1_id === $auth->id ? $relation->user2_id : $relation->user1_id,
                 'username' => $relation->user1_id === $auth->id ? $relation->user2->username : $relation->user1->username,
                 'relation' => [
                     'id'     => $relation->id,

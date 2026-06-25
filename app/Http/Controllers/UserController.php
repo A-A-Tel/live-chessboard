@@ -7,8 +7,8 @@ use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Models\Relation;
 use App\Models\User;
+use App\Models\UserSetting;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
@@ -60,7 +60,9 @@ class UserController extends Controller
             'user'  => $auth,
             'users' => $users,
         ]);
-    }    /**
+    }
+
+    /**
      * Display the specified resource.
      */
     public function show(User $user)
@@ -84,6 +86,7 @@ class UserController extends Controller
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
+        UserSetting::create(["user_id" => $user->id]);
         auth()->login($user);
         return redirect()->intended('/');
     }

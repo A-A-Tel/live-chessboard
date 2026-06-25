@@ -91,3 +91,7 @@
 button {
     cursor: pointer;
 }
+
+input[type=file] {
+    cursor: pointer;
+}

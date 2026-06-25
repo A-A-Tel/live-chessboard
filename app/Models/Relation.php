@@ -13,18 +13,12 @@ class Relation extends Model
         'created_at', 'updated_at',
     ];
 
-    protected $relations = [
-        'user1' => User::class,
-        'user2' => User::class,
-        'sender' => User::class,
-    ];
-
-    public function userAsUser1(): BelongsTo
+    public function user1(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user1_id');
     }
 
-    public function userAsUser2(): BelongsTo
+    public function user2(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user2_id');
     }

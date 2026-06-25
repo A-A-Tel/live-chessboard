@@ -14,12 +14,12 @@ Route::get('/', function () {
 })->name('page.home');
 
 Route::get('/register', function () {
-    return Inertia::render('Register');
-});
+    return Inertia::render('Register', ['user' => auth()->user()]);
+})->name('page.register');
 
 Route::get('/login', function () {
-    return Inertia::render('Login');
-});
+    return Inertia::render('Login',['user' => auth()->user()]);
+})->name('page.login');
 
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
@@ -53,13 +53,16 @@ Route::middleware('auth')->group(function () {
 Route::controller(UserController::class)->group(function () {
     Route::get('/users', 'index')->name('users');
     Route::post('/users', 'store')->name('users.store');
-    Route::put('/users', 'update')->name('users.update');
-    Route::patch('/users', 'changeAvatar')->name('users.changeAvatar');
-    Route::delete('/users', 'destroy')->name('users.destroy');
+    Route::middleware('auth')->group(function () {
+        Route::put('/users', 'update')->name('users.update');
+        Route::patch('/users', 'changeAvatar')->name('users.changeAvatar');
+        Route::delete('/users', 'destroy')->name('users.destroy');
+    });
 });
 
-Route::controller(UserSettingController::class)->group(function () {
+Route::middleware('auth')->controller(UserSettingController::class)->group(function () {
     Route::get('/settings', 'index')->name('settings');
+    Route::put('/settings', 'update')->name('settings.update');
 });
 
 Route::controller(AuthController::class)->group(function () {

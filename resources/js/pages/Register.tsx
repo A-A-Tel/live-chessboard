@@ -1,14 +1,15 @@
 import Header from '@/components/header';
 import { Form, usePage } from '@inertiajs/react';
+import { Auth } from '@/types';
 
-export default function Register() {
+export default function Register(props: {auth: Auth}) {
     const { errors } = usePage().props as {
         errors: Record<string, string>;
     };
 
     return (
         <>
-            <Header />
+            <Header user={props.auth.user} />
             <Form className="form secondary-text" method="post" action="/users" encType="multipart/form-data">
                 <h1 className="primary-text mx-auto text-5xl">Registreer hier nu</h1>
 
