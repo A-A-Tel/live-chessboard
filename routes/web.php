@@ -10,16 +10,20 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home', ['user' => auth()->user()]);
+    return Inertia::render('Home');
 })->name('page.home');
 
 Route::get('/register', function () {
-    return Inertia::render('Register', ['user' => auth()->user()]);
+    return Inertia::render('Register');
 })->name('page.register');
 
 Route::get('/login', function () {
-    return Inertia::render('Login',['user' => auth()->user()]);
+    return Inertia::render('Login');
 })->name('page.login');
+
+Route::get('/test', function () {
+    return Inertia::render('Test');
+})->name('page.test');
 
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
