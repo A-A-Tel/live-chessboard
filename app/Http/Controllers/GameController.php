@@ -3,63 +3,52 @@
 namespace App\Http\Controllers;
 
 use App\Models\Game;
-use Illuminate\Http\Request;
+use App\Models\GameQueue;
+use App\Events\MatchFound;
+use Inertia\Inertia;
 
 class GameController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function queue()
     {
-        //
+        $user = auth()->user();
+
+        // Idempotent — don't double-insert
+        GameQueue::firstOrCreate(['user_id' => $user->id]);
+
+        $this->tryMatchmaking();
+
+        return Inertia::render('Queue');
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function leaveQueue()
     {
-        //
+        GameQueue::where('user_id', auth()->id())->delete();
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
+    public function play() {
+        $user = auth()->user();
+
+
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(Game $game)
+    private function tryMatchmaking(): void
     {
-        //
-    }
+        // Lock to prevent race conditions if two players join simultaneously
+        $players = GameQueue::lockForUpdate()->oldest()->take(2)->get();
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(Game $game)
-    {
-        //
-    }
+        if ($players->count() < 2) return;
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, Game $game)
-    {
-        //
-    }
+        $game = Game::create([
+            'white_user_id' => $players[0]->user_id,
+            'black_user_id' => $players[1]->user_id,
+        ]);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Game $game)
-    {
-        //
+        GameQueue::whereIn('user_id', $players->pluck('user_id'))->delete();
+
+        broadcast(new MatchFound($game))->toOthers();
+
+        // Broadcast to both players (including current user)
+        broadcast(new MatchFound($game));
     }
 }

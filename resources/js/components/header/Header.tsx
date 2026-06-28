@@ -12,10 +12,10 @@ type HeaderProps = {
 
 export default function Header(props: HeaderProps) {
 
-    let accountOptions;
+    let loggedInOptions;
 
     if (props.user) {
-        accountOptions = (
+        loggedInOptions = (
             <div className="mr-20 ml-auto flex">
                 <Link href={`/profile/${props.user.id}`}>
                     <img
@@ -41,7 +41,7 @@ export default function Header(props: HeaderProps) {
         );
     }
     else {
-        accountOptions = (
+        loggedInOptions = (
             <div className="mr-20 ml-auto flex">
                 <img src={noPfp} alt="Avatar" className="mr-10 h-[8vh] rounded-full" />
                 <div className="flex flex-col">
@@ -68,12 +68,12 @@ export default function Header(props: HeaderProps) {
                 <span className='primary-text text-4xl m-[auto_0_auto_0]'>Kawaii Chess</span>
             </Link>
             <nav className='flex secondary-text text-2xl gap-15 justify-around'>
-                <Link>Spelen</Link>
+                <Link href='/queue'>Spelen</Link>
                 <Link href={props.user ? `/profile/${props.user.id}` : '/login'}>Profiel</Link>
                 <Link href='/users'>Gebruikers</Link>
                 <Link href='/friends'>Vrienden</Link>
             </nav>
-            {accountOptions}
+            {loggedInOptions}
         </header>
     );
 }

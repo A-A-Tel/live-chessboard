@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\UserCommentController;
@@ -62,6 +63,11 @@ Route::controller(UserController::class)->group(function () {
         Route::patch('/users', 'changeAvatar')->name('users.changeAvatar');
         Route::delete('/users', 'destroy')->name('users.destroy');
     });
+});
+
+Route::controller(GameCOntroller::class)->group(function () {
+    Route::get('/queue', 'queue')->name('queue');
+    Route::delete('/queue', 'leaveQueue')->name('leaveQueue');
 });
 
 Route::middleware('auth')->controller(UserSettingController::class)->group(function () {
