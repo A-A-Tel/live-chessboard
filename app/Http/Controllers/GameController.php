@@ -6,6 +6,7 @@ use App\Events\MatchEnded;
 use App\Events\MoveMade;
 use App\Http\Requests\MoveRequest;
 use App\Models\Game;
+use App\Models\GameComment;
 use App\Models\GameQueue;
 use App\Events\MatchFound;
 use Inertia\Inertia;
@@ -127,5 +128,15 @@ class GameController extends Controller
         GameQueue::whereIn('user_id', $players->pluck('user_id'))->delete();
 
         broadcast(new MatchFound($game));
+    }
+
+    public function show(Game $game) {
+        $game->load('blackUser', 'whiteUser', 'winner');
+
+        $comments = GameComment::with(['commenter'])->where('game_id', $game->id)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('Game', ['game' => $game, 'comments' => $comments]);
     }
 }

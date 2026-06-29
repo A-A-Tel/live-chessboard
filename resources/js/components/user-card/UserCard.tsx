@@ -24,7 +24,7 @@ export default function UserCard({user, other}: {user?: User, other: OtherUser})
 
     return (
         <div key={other.id} className="bg-secondary align-items-center flex h-40 w-[22vw] gap-5 rounded-2xl p-7">
-            <img src={other.avatar ? `/storage/avatars/${other.avatar}` : noPfp} alt="avatar" className="h-25 w-25 rounded-full" />
+            <img src={other.avatar == null ? noPfp : `/storage/avatars/${other.avatar}`} alt="avatar" className="h-25 w-25 rounded-full" />
             <div className="flex flex-col justify-between gap-4">
                 <span className="primary-text text-4xl">{other.username}</span>
                 <div className="flex gap-2">

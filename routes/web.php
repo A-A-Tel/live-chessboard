@@ -1,7 +1,9 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GameCommentController;
 use App\Http\Controllers\GameController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\UserCommentController;
@@ -10,9 +12,7 @@ use App\Http\Controllers\UserSettingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-Route::get('/', function () {
-    return Inertia::render('Home');
-})->name('page.home');
+Route::get('/', [HomeController::class, 'index'])->name('page.home')->name('page.home');
 
 Route::get('/register', function () {
     return Inertia::render('Register');
@@ -34,6 +34,11 @@ Route::controller(ProfileController::class)->group(function () {
 Route::controller(UserCommentController::class)->middleware('auth')->group(function () {
     Route::post('/user/comments/{user}', 'store')->name('user.comments.store');
     Route::delete('/user/comments/{comment}', 'destroy')->name('user.comments.destroy');
+});
+
+Route::controller(GameCommentController::class)->group(function () {
+    Route::post('/game/comments/{game}', 'store')->name('game.comments.store');
+    Route::delete('/game/comments/{comment}', 'destroy')->name('game.comments.destroy');
 });
 
 Route::middleware('auth')->group(function () {
@@ -69,6 +74,7 @@ Route::controller(GameController::class)->middleware('auth')->group(function () 
     Route::get('/queue', 'queue')->name('queue');
     Route::delete('/queue', 'leaveQueue')->name('leaveQueue');
 
+    Route::get('/game/{game}', 'show')->name('game.show');
     Route::get('/play/{game}', 'play')->name('play');
     Route::patch('/game/{game}/move', 'move')->name('game.move');
     Route::patch('/game/{game}/forfeit', 'forfeit')->name('game.forfeit');

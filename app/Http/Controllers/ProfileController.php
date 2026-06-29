@@ -2,7 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserCommentRequest;
+use App\Http\Requests\StoreCommentRequest;
+use App\Models\Game;
 use App\Models\User;
 use App\Models\UserComment;
 use Inertia\Inertia;
@@ -28,6 +29,11 @@ class ProfileController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        return Inertia::render('Profile', ['user' => auth()->user(), 'profileUser' => $user, 'comments' => $comments]);
+        $games = Game::where('white_user_id', $user->id)
+            ->orWhere('black_user_id', $user->id)
+            ->with(['blackUser', 'whiteUser', 'winner'])
+            ->get();
+
+        return Inertia::render('Profile', ['user' => auth()->user(), 'profileUser' => $user, 'comments' => $comments, 'games' => $games]);
     }
 }

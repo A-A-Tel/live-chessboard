@@ -7,6 +7,7 @@ type GameChessboardProps = {
     moves: string[];
     onMove: (move: string) => void;
     playerColor?: 'white' | 'black';
+    forceReadOnly?: boolean;
 }
 
 const PIECE_MAP: Record<string, PieceName> = {
@@ -56,7 +57,9 @@ export default function GameChessboard({
                                            moves,
                                            onMove,
                                            playerColor = 'white',
+                                           forceReadOnly = false
                                        }: GameChessboardProps) {
+
     const { boardState, chess } = useMemo(() => {
         const chess = buildChessInstance(moves);
         return { boardState: chessJsBoardToState(chess), chess };
@@ -82,7 +85,7 @@ export default function GameChessboard({
         <Chessboard
             boardState={boardState}
             reversed={playerColor === 'black'}
-            readOnly={!isMyTurn}
+            readOnly={forceReadOnly?? !isMyTurn}
             onMoveAttempt={handleMoveAttempt}
         />
     );

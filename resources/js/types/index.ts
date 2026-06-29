@@ -41,6 +41,12 @@ export type Game = {
     winner_id: number;
 }
 
+export type ListGame = Game & {
+    white_user: User;
+    black_user: User;
+    winner: User;
+}
+
 enum SettingValues {
     DATA_PERMISSIONS = 1,
     DISABLE_SOUND = 2,
