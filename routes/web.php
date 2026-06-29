@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GameController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RelationController;
 use App\Http\Controllers\UserCommentController;
@@ -10,16 +11,20 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get('/', function () {
-    return Inertia::render('Home', ['user' => auth()->user()]);
+    return Inertia::render('Home');
 })->name('page.home');
 
 Route::get('/register', function () {
-    return Inertia::render('Register', ['user' => auth()->user()]);
+    return Inertia::render('Register');
 })->name('page.register');
 
 Route::get('/login', function () {
-    return Inertia::render('Login',['user' => auth()->user()]);
+    return Inertia::render('Login');
 })->name('page.login');
+
+Route::get('/test', function () {
+    return Inertia::render('Test');
+})->name('page.test');
 
 Route::controller(ProfileController::class)->group(function () {
     Route::get('/profile', 'index')->name('profile');
@@ -58,6 +63,15 @@ Route::controller(UserController::class)->group(function () {
         Route::patch('/users', 'changeAvatar')->name('users.changeAvatar');
         Route::delete('/users', 'destroy')->name('users.destroy');
     });
+});
+
+Route::controller(GameController::class)->middleware('auth')->group(function () {
+    Route::get('/queue', 'queue')->name('queue');
+    Route::delete('/queue', 'leaveQueue')->name('leaveQueue');
+
+    Route::get('/play/{game}', 'play')->name('play');
+    Route::patch('/game/{game}/move', 'move')->name('game.move');
+    Route::patch('/game/{game}/forfeit', 'forfeit')->name('game.forfeit');
 });
 
 Route::middleware('auth')->controller(UserSettingController::class)->group(function () {

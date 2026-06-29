@@ -32,6 +32,15 @@ export type Auth = {
     settings?: Settings;
 }
 
+export type Game = {
+    id: number;
+    ended: boolean
+    moves: string;
+    white_user_id: number;
+    black_user_id: number;
+    winner_id: number;
+}
+
 enum SettingValues {
     DATA_PERMISSIONS = 1,
     DISABLE_SOUND = 2,

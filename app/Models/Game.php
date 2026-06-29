@@ -8,7 +8,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Game extends Model
 {
     protected $fillable = [
-        'moves'
+        'moves',
+        'white_user_id',
+        'black_user_id',
+        'winner_id',
+        'ended'
     ];
 
     public function whiteUser(): BelongsTo
