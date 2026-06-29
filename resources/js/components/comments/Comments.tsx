@@ -41,7 +41,7 @@ export default function Comments(props: CommentsProps) {
 
                 <div className="mt-9 flex flex-col gap-8">
                     {props.comments.map((comment: Comment) => (
-                        <div className="bg-primary flex gap-4 rounded-2xl p-5">
+                        <div key={comment.id} className="bg-primary flex gap-4 rounded-2xl p-5">
                             <img className="h-26 w-26 rounded-full" src={`/storage/avatars/${comment.commenter.avatar}`} alt="Avatar" />
                             <div>
 

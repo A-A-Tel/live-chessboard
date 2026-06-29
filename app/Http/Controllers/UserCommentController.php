@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreUserCommentRequest;
+use App\Http\Requests\StoreCommentRequest;
 use App\Models\User;
 use App\Models\UserComment;
 use Illuminate\Http\Request;
 
 class UserCommentController extends Controller {
 
-    public function store(StoreUserCommentRequest $request, User $user) {
+    public function store(StoreCommentRequest $request, User $user) {
         $data = $request->validated();
         $commenter = auth()->user();
 

@@ -9,7 +9,8 @@ class GameComment extends Model
 {
     protected $fillable = [
         'content',
-        'game_id'
+        'game_id',
+        'commenter_id',
     ];
 
     public function commenter(): BelongsTo
