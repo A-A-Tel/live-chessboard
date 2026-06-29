@@ -11,7 +11,8 @@ class Game extends Model
         'moves',
         'white_user_id',
         'black_user_id',
-        'winner_id'
+        'winner_id',
+        'ended'
     ];
 
     public function whiteUser(): BelongsTo

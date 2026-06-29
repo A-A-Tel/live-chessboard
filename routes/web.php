@@ -65,9 +65,13 @@ Route::controller(UserController::class)->group(function () {
     });
 });
 
-Route::controller(GameCOntroller::class)->group(function () {
+Route::controller(GameController::class)->middleware('auth')->group(function () {
     Route::get('/queue', 'queue')->name('queue');
     Route::delete('/queue', 'leaveQueue')->name('leaveQueue');
+
+    Route::get('/play/{game}', 'play')->name('play');
+    Route::patch('/game/{game}/move', 'move')->name('game.move');
+    Route::patch('/game/{game}/forfeit', 'forfeit')->name('game.forfeit');
 });
 
 Route::middleware('auth')->controller(UserSettingController::class)->group(function () {

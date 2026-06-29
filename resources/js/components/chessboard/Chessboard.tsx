@@ -9,12 +9,13 @@ export type SquareData = {
 export type BoardState = SquareData[];
 
 export type ChessboardProps = {
+    reversed?: boolean;
     boardState?: BoardState;
     readOnly?: boolean;
     onMoveAttempt: (fromIndex: number, toIndex: number) => void;
 }
 
-export const initialEmptyBoard: BoardState = [
+export const initialDefaultBoard: BoardState = [
     // Rank 8
     { piece: 'rook', color: 'black' },
     { piece: 'knight', color: 'black' },
@@ -97,7 +98,7 @@ export const initialEmptyBoard: BoardState = [
 ];
 
 
-export default function Chessboard({ boardState = initialEmptyBoard.slice(), readOnly = false, onMoveAttempt }: ChessboardProps) {
+export default function Chessboard({ boardState = initialDefaultBoard.slice(), readOnly = false, onMoveAttempt, reversed = false }: ChessboardProps) {
     const handleDragStart = (e: React.DragEvent, index: number) => {
         if (readOnly) {
             e.preventDefault();
@@ -124,20 +125,31 @@ export default function Chessboard({ boardState = initialEmptyBoard.slice(), rea
 
     return (
         <div className="grid aspect-square w-full grid-cols-8 grid-rows-8 shadow-[0_8px_24px_rgba(0,0,0,0.15)] select-none">
-            {boardState.map((square, index) => {
-                const row = Math.floor(index / 8);
-                const col = index % 8;
+            {Array.from({ length: 64 }).map((_, displayIndex) => {
+                const index = reversed ? 63 - displayIndex : displayIndex;
+
+                const row = Math.floor(displayIndex / 8);
+                const col = displayIndex % 8;
                 const isDark = (row + col) % 2 === 1;
+
+                const square = boardState[index];
 
                 return (
                     <div
                         key={index}
                         onDragOver={handleDragOver}
                         onDrop={(e) => handleDrop(e, index)}
-                        className={`relative flex h-full w-full items-center justify-center ${isDark ? 'bg-[#673AB7]' : 'bg-[#D0C3E8]'} `}
+                        className={`relative flex h-full w-full items-center justify-center ${
+                            isDark ? 'bg-[#673AB7]' : 'bg-[#D0C3E8]'
+                        }`}
                     >
-                        {square.piece && square.color && (
-                            <Piece type={square.piece} color={square.color} draggable={!readOnly} onDragStart={(e) => handleDragStart(e, index)} />
+                        {square?.piece && square?.color && (
+                            <Piece
+                                type={square.piece}
+                                color={square.color}
+                                draggable={!readOnly}
+                                onDragStart={(e) => handleDragStart(e, index)}
+                            />
                         )}
                     </div>
                 );
